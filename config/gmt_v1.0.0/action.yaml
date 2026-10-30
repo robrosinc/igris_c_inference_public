@@ -1,0 +1,26 @@
+igris_c_inference_actions:
+  apply_order: [joint_position, motion_command]
+  terms:
+    joint_position:
+      function: safe_joint_position
+      output: actions
+      params:
+        unselected_joint_behavior: hold_current
+        position_limit_recovery:
+          soft_limit_ratio: 0.8
+          excluded_joints: [WR, WP, LAP, LAR, RAP, RAR]
+      # teacher_187 ONNX action order.
+      action_joints: [LSP, RSP, WY, LSR, RSR, WR, LSY, RSY, WP, LEP, REP, LHP, RHP, LHR, RHR, LHY, RHY, LKP, RKP, LAP, RAP, LAR, RAR]
+      action_scale: [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25]
+      kp: [60.757285, 60.757285, 60.757285, 60.757285, 60.757285, 660.634418, 60.757285, 60.757285, 230.579719, 60.757285, 60.757285, 118.435253, 118.435253, 122.136354, 122.136354, 60.757285, 60.757285, 118.435253, 118.435253, 93.373568, 93.373568, 77.634366, 77.634366]
+      kd: [4.297699, 4.297699, 4.297699, 4.297699, 4.297699, 36.256342, 4.297699, 4.297699, 12.653342, 4.297699, 4.297699, 15.079645, 15.079645, 10.367256, 10.367256, 4.297699, 4.297699, 15.079645, 15.079645, 14.863025, 14.863025, 12.355893, 12.355893]
+      output_clip: {min: -100.0, max: 100.0}
+
+    motion_command:
+      function: motion_command_action
+      params:
+        command: motion_command
+        offset: 0
+        joints: [LWY, LWR, LWP, RWY, RWR, RWP, NY, NP]
+        kp: [15.0, 15.0, 15.0, 15.0, 15.0, 15.0, 5.0, 10.0]
+        kd: [1, 1, 1, 1, 1, 1, 0.1, 0.1]

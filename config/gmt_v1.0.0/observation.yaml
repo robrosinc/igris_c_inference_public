@@ -1,0 +1,25 @@
+igris_c_inference_observations:
+  # teacher_182 ONNX metadata joint order.
+  obs_joints: [LSP, RSP, WY, LSR, RSR, WR, LSY, RSY, WP, LEP, REP, LHP, RHP, LHR, RHR, LHY, RHY, LKP, RKP, LAP, RAP, LAR, RAR]
+
+  groups:
+    # Exact teacher_182 layout (1968): five 20-sample state/action histories
+    # followed by six reference frames at offsets [0, 2, 4, 6, 8, 10].
+    # Reference components are packed component-major to match legacy
+    # motion_frame_stack behavior.
+    - name: obs
+      terms:
+        - {function: joint_pos_rel,     history_length: 20}
+        - {function: joint_vel,         history_length: 20, lpf_cutoff_hz: 16}
+        - {function: projected_gravity, history_length: 20}
+        - {function: base_ang_vel,      history_length: 20, lpf_cutoff_hz: 50}
+        - {function: last_actions, params: {name: joint_position}, history_length: 20}
+        # filtered command layout:
+        # [6 x 23 joint position, 6 x 1 height, 6 x 6 orientation,
+        #  6 x 42 body position, 6 x 3 linear velocity, 6 x 3 angular velocity]
+        - {name: filtered_joint_position_stack, function: command, params: {name: filtered, offset: 0, size: 138}, update_at: policy}
+        - {name: filtered_anchor_height_stack, function: command, params: {name: filtered, offset: 138, size: 6}, update_at: policy}
+        - {name: filtered_anchor_orientation_stack, function: command, params: {name: filtered, offset: 144, size: 36}, update_at: policy}
+        - {name: filtered_body_position_stack, function: command, params: {name: filtered, offset: 180, size: 252}, update_at: policy}
+        - {name: filtered_anchor_linear_velocity_stack, function: command, params: {name: filtered, offset: 432, size: 18}, lpf_cutoff_hz: 8, update_at: policy}
+        - {name: filtered_anchor_angular_velocity_stack, function: command, params: {name: filtered, offset: 450, size: 18}, lpf_cutoff_hz: 8, update_at: policy}

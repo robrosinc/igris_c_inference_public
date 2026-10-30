@@ -1,0 +1,12 @@
+igris_c_inference_policy:
+  rate_hz: 50
+  files:
+    command: command.yaml
+    observation: observation.yaml
+    action: action.yaml
+    termination: termination.yaml
+    event: event.yaml
+  # teacher_182.onnx exposes one legacy GMT input: obs [1, 1968].
+  inputs: [obs]
+  outputs:
+    - {name: actions, tensor: actions, offset: 0, size: 23}
