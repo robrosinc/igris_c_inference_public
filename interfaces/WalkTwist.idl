@@ -1,0 +1,28 @@
+module igris_c {
+  module msg {
+    module dds {
+      struct Header {
+        unsigned long seq;
+        unsigned long sec;
+        unsigned long nanosec;
+        char frame_id[256];
+      };
+
+      struct Vector3 {
+        double x;
+        double y;
+        double z;
+      };
+
+      struct Twist {
+        Vector3 linear;
+        Vector3 angular;
+      };
+
+      struct WalkTwist {
+        Header header;
+        Twist twist;
+      };
+    };
+  };
+};

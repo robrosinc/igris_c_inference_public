@@ -1,0 +1,37 @@
+[workspace]
+name = "igris-c-inference-public"
+version = "0.1.0"
+description = "Isolated build and runtime environment for IGRIS-C inference"
+channels = ["https://prefix.dev/robostack-jazzy", "conda-forge"]
+platforms = ["linux-64"]
+
+[dependencies]
+python = "3.12.*"
+cxx-compiler = ">=1.11.0,<2"
+c-compiler = ">=1.11.0,<2"
+cmake = ">=4.4.0,<5"
+ninja = ">=1.13.2,<2"
+pkg-config = ">=0.29.2,<1"
+clang-format = ">=21.1.6,<22"
+cmake-format = ">=0.6.13,<0.7"
+colcon-common-extensions = ">=0.3.0,<1"
+ros-jazzy-ros-base = ">=0.11.0,<1"
+ros-jazzy-ament-cmake = ">=2.5.5,<3"
+ros-jazzy-ament-lint-auto = ">=0.17.4,<1"
+ros-jazzy-ament-lint-common = ">=0.17.4,<1"
+ros-jazzy-rclcpp = ">=28.1.16,<29"
+ros-jazzy-rosidl-default-generators = ">=1.6.0,<2"
+ros-jazzy-rosidl-default-runtime = ">=1.6.0,<2"
+ros-jazzy-std-msgs = ">=5.3.6,<6"
+ros-jazzy-geometry-msgs = ">=5.3.6,<6"
+eigen = ">=3.4,<4"
+yaml-cpp = ">=0.8.0,<1"
+openssl = ">=3,<4"
+onnxruntime-cpp = ">=1.26.0,<2"
+sysroot_linux-64 = "==2.39"
+
+[tasks]
+build = { cmd = "bash tools/build_pixi.sh" }
+verify = { cmd = "bash tools/verify_pixi_build.sh" }
+run = { cmd = "bash tools/run_pixi.sh" }
+joint-viewer = { cmd = "python tools/vr_motion_viewer.py" }

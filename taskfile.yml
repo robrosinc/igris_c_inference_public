@@ -1,0 +1,20 @@
+version: "3"
+
+tasks:
+  build:
+    desc: Install the locked Pixi environment, build the SDK and node, then verify linkage
+    cmds:
+    - pixi install --locked
+    - pixi run --locked build
+    - pixi run --locked verify
+
+  fmt:
+    desc: Format project C++ and CMake sources without touching vendored or generated files
+    cmds:
+    - |
+      find ./include ./src -type f \
+        \( -name "*.hpp" -o -name "*.h" -o -name "*.cpp" \) \
+        -print0 | xargs -0 -r pixi run --locked clang-format -i
+      pixi run --locked cmake-format -i \
+        ./CMakeLists.txt \
+        ./cmake/igris_c_inference_public-extras.cmake
