@@ -1,0 +1,83 @@
+igris_c_inference_commands:
+  terms:
+    motion:
+      # Command-owned history makes every historical reference orientation
+      # relative to the current robot base, matching the SONIC contract.
+      function: motion_reference
+      source:
+        type: ros
+        params:
+          topic: /gmr/teleop/retarget_frame
+          node_name: igris_c_motion_reference
+          domain_id: 91
+          qos_depth: 1
+          best_effort: true
+          joint_names:
+            [Joint_Waist_Yaw, Joint_Waist_Roll, Joint_Waist_Pitch,
+            Joint_Hip_Pitch_Left, Joint_Hip_Roll_Left, Joint_Hip_Yaw_Left,
+            Joint_Knee_Pitch_Left, Joint_Ankle_Pitch_Left, Joint_Ankle_Roll_Left,
+            Joint_Hip_Pitch_Right, Joint_Hip_Roll_Right, Joint_Hip_Yaw_Right,
+            Joint_Knee_Pitch_Right, Joint_Ankle_Pitch_Right, Joint_Ankle_Roll_Right,
+            Joint_Shoulder_Pitch_Left, Joint_Shoulder_Roll_Left,
+            Joint_Shoulder_Yaw_Left, Joint_Elbow_Pitch_Left,
+            Joint_Wrist_Yaw_Left, Joint_Wrist_Roll_Left, Joint_Wrist_Pitch_Left,
+            Joint_Shoulder_Pitch_Right, Joint_Shoulder_Roll_Right,
+            Joint_Shoulder_Yaw_Right, Joint_Elbow_Pitch_Right,
+            Joint_Wrist_Yaw_Right, Joint_Wrist_Roll_Right, Joint_Wrist_Pitch_Right,
+            Joint_Neck_Yaw, Joint_Neck_Pitch]
+      params:
+        anchor_body: base_link
+        # Match Isaac Play's initial world heading without changing the
+        # reference roll, pitch, or relative yaw trajectory.
+        heading_alignment: initial
+        history_length: 5
+        history_stride: 5
+        history_order: oldest_to_newest
+        stale_after_ms: 100
+        on_stale: hold_last
+        # Components are emitted component-major, then in frame_offsets order.
+        components:
+          - field: joint_position
+            names: [Joint_Shoulder_Pitch_Left, Joint_Shoulder_Pitch_Right, Joint_Waist_Yaw, Joint_Shoulder_Roll_Left, Joint_Shoulder_Roll_Right, Joint_Waist_Roll, Joint_Shoulder_Yaw_Left, Joint_Shoulder_Yaw_Right, Joint_Waist_Pitch, Joint_Elbow_Pitch_Left, Joint_Elbow_Pitch_Right, Joint_Hip_Pitch_Left, Joint_Hip_Pitch_Right, Joint_Hip_Roll_Left, Joint_Hip_Roll_Right, Joint_Hip_Yaw_Left, Joint_Hip_Yaw_Right, Joint_Knee_Pitch_Left, Joint_Knee_Pitch_Right, Joint_Ankle_Pitch_Left, Joint_Ankle_Pitch_Right, Joint_Ankle_Roll_Left, Joint_Ankle_Roll_Right]
+          - field: joint_velocity
+            names: [Joint_Shoulder_Pitch_Left, Joint_Shoulder_Pitch_Right, Joint_Waist_Yaw, Joint_Shoulder_Roll_Left, Joint_Shoulder_Roll_Right, Joint_Waist_Roll, Joint_Shoulder_Yaw_Left, Joint_Shoulder_Yaw_Right, Joint_Waist_Pitch, Joint_Elbow_Pitch_Left, Joint_Elbow_Pitch_Right, Joint_Hip_Pitch_Left, Joint_Hip_Pitch_Right, Joint_Hip_Roll_Left, Joint_Hip_Roll_Right, Joint_Hip_Yaw_Left, Joint_Hip_Yaw_Right, Joint_Knee_Pitch_Left, Joint_Knee_Pitch_Right, Joint_Ankle_Pitch_Left, Joint_Ankle_Pitch_Right, Joint_Ankle_Roll_Left, Joint_Ankle_Roll_Right]
+          - {field: anchor_orientation, robot_frame: base_link}
+          - {field: anchor_linear_velocity}
+          - {field: anchor_angular_velocity}
+          - field: body_position
+            # Match policy.onnx resolved_body_names, including ordering:
+            # (23 + 23 + 6 + 3 + 3 + 13*3) * 5 = 485 values.
+            names: [base_link, Left_Hand, Right_Hand, Link_Ankle_Roll_Left, Link_Ankle_Roll_Right, Link_Elbow_Pitch_Left, Link_Elbow_Pitch_Right, Link_Shoulder_Pitch_Left, Link_Shoulder_Pitch_Right, Link_Knee_Pitch_Left, Link_Knee_Pitch_Right, Link_Hip_Pitch_Left, Link_Hip_Pitch_Right]
+
+
+    motion_command:
+      # Current arm, wrist, neck, and waist yaw targets are isolated from the policy reference
+      # so the released SONIC observation contract remains unchanged.
+      function: motion_reference
+      source:
+        type: ros
+        params:
+          topic: /gmr/teleop/retarget_frame
+          node_name: igris_c_motion_command_reference
+          domain_id: 91
+          qos_depth: 1
+          best_effort: true
+          joint_names:
+            [Joint_Waist_Yaw, Joint_Waist_Roll, Joint_Waist_Pitch,
+            Joint_Hip_Pitch_Left, Joint_Hip_Roll_Left, Joint_Hip_Yaw_Left,
+            Joint_Knee_Pitch_Left, Joint_Ankle_Pitch_Left, Joint_Ankle_Roll_Left,
+            Joint_Hip_Pitch_Right, Joint_Hip_Roll_Right, Joint_Hip_Yaw_Right,
+            Joint_Knee_Pitch_Right, Joint_Ankle_Pitch_Right, Joint_Ankle_Roll_Right,
+            Joint_Shoulder_Pitch_Left, Joint_Shoulder_Roll_Left,
+            Joint_Shoulder_Yaw_Left, Joint_Elbow_Pitch_Left,
+            Joint_Wrist_Yaw_Left, Joint_Wrist_Roll_Left, Joint_Wrist_Pitch_Left,
+            Joint_Shoulder_Pitch_Right, Joint_Shoulder_Roll_Right,
+            Joint_Shoulder_Yaw_Right, Joint_Elbow_Pitch_Right,
+            Joint_Wrist_Yaw_Right, Joint_Wrist_Roll_Right, Joint_Wrist_Pitch_Right,
+            Joint_Neck_Yaw, Joint_Neck_Pitch]
+      params:
+        stale_after_ms: 100
+        on_stale: hold_last
+        components:
+          - field: joint_position
+            names: [Joint_Wrist_Yaw_Left, Joint_Wrist_Roll_Left, Joint_Wrist_Pitch_Left, Joint_Wrist_Yaw_Right, Joint_Wrist_Roll_Right, Joint_Wrist_Pitch_Right, Joint_Neck_Yaw, Joint_Neck_Pitch, Joint_Shoulder_Pitch_Left, Joint_Shoulder_Pitch_Right, Joint_Shoulder_Roll_Left, Joint_Shoulder_Roll_Right, Joint_Shoulder_Yaw_Left, Joint_Shoulder_Yaw_Right, Joint_Elbow_Pitch_Left, Joint_Elbow_Pitch_Right, Joint_Waist_Yaw]
