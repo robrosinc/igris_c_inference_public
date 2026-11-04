@@ -1,0 +1,23 @@
+igris_c_inference_observations:
+  obs_joints: [LSP, RSP, WY, LSR, RSR, WR, LSY, RSY, WP, LEP, REP, LHP, RHP, LHR, RHR, LHY, RHY, LKP, RKP, LAP, RAP, LAR, RAR]
+
+  groups:
+    # The exported FSQ policy calls this input actor_observations.  Isaac Lab
+    # applies the group history_length=10 to each term, yielding 750 values in
+    # the order [base_ang_vel, projected_gravity, joint_pos, joint_vel,
+    # last_actions], oldest to newest for each term.
+    - name: actor_observations
+      terms:
+        - {function: base_ang_vel,      history_length: 10, lpf_cutoff_hz: 50}
+        - {function: projected_gravity, history_length: 10}
+        - {function: joint_pos_rel,     history_length: 10}
+        # The approved deployment option uses the existing SDK joint velocity
+        # term, as in the previous GMT configuration.  Training computes a
+        # finite-difference velocity, so this approximation is intentional.
+        - {function: joint_vel,         history_length: 10}
+        - {function: last_actions, params: {name: joint_position}, history_length: 10}
+    - name: motion_reference
+      terms:
+        - function: command
+          params: {name: motion}
+          update_at: policy

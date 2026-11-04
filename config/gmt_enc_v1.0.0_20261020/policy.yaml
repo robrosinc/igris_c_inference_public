@@ -1,0 +1,11 @@
+igris_c_inference_policy:
+  rate_hz: 50
+  files:
+    command: command.yaml
+    observation: observation.yaml
+    action: action.yaml
+    termination: termination.yaml
+    event: event.yaml
+  inputs: [actor_observations, motion_reference]
+  outputs:
+    - {name: actions, tensor: actions, offset: 0, size: 23}

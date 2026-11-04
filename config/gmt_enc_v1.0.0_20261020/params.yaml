@@ -1,0 +1,19 @@
+igris_c_inference:
+  robot:
+    domain_id: 91
+    namespace: "igris_c_5e0974f3"
+    cyclonedds_xml_path: ""
+    state_topic: lowstate
+    robot_state_topic: robotstate
+    command_topic: lowcmd
+  loop:
+    control_hz: 300
+  startup:
+    first_state_timeout_ms: 50000
+    enter_low_level_mode: false
+    low_level_mode_timeout_ms: 50000
+    command_timeout_ms: 50000
+  files:
+    robot: ./robot.yaml
+    policy_config: policy.yaml
+    policy: policy.onnx
